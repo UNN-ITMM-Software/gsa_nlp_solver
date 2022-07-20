@@ -226,7 +226,8 @@ void NLPSolver::FirstIteration()
 
 void NLPSolver::MakeTrials()
 {
-  for (size_t i = 0; i < mNextPoints.size(); i++)
+  #pragma omp parallel for //schedule(dynamic)
+  for (int i = 0; i < mNextPoints.size(); i++)
   {
     int idx = 0;
     while(idx < mProblem->GetConstraintsNumber())
@@ -239,25 +240,27 @@ void NLPSolver::MakeTrials()
         break;
       idx++;
     }
-
-    if(idx > mMaxIdx)
+    #pragma omp critical
     {
-      mMaxIdx = idx;
-      for(int i = 0; i < mMaxIdx; i++)
-        mZEstimations[i] = -mParameters.epsR*mHEstimations[i];
-      mNeedRefillQueue = true;
+    if (idx > mMaxIdx)
+    {
+        mMaxIdx = idx;
+        for (int i = 0; i < mMaxIdx; i++)
+            mZEstimations[i] = -mParameters.epsR * mHEstimations[i];
+        mNeedRefillQueue = true;
     }
     if (idx == mProblem->GetConstraintsNumber())
     {
-      mCalculationsCounters[idx]++;
-      mNextPoints[i].idx = idx;
-      mNextPoints[i].g[idx] = mProblem->Calculate(mNextPoints[i].y, idx);
+        mCalculationsCounters[idx]++;
+        mNextPoints[i].idx = idx;
+        mNextPoints[i].g[idx] = mProblem->Calculate(mNextPoints[i].y, idx);
     }
-    if(mNextPoints[i].idx == mMaxIdx &&
-       mNextPoints[i].g[mMaxIdx] < mZEstimations[mMaxIdx])
+    if (mNextPoints[i].idx == mMaxIdx &&
+        mNextPoints[i].g[mMaxIdx] < mZEstimations[mMaxIdx])
     {
-      mZEstimations[mMaxIdx] = mNextPoints[i].g[mMaxIdx];
-      mNeedRefillQueue = true;
+        mZEstimations[mMaxIdx] = mNextPoints[i].g[mMaxIdx];
+        mNeedRefillQueue = true;
+    }
     }
   }
 }
