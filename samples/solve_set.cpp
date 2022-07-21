@@ -31,7 +31,8 @@ int main(int argc, char** argv)
   parameters.mixedFastMode = parser.exist("mf");
   bool stop_by_acc = parser.exist("accuracyStop");
   parameters.eps = stop_by_acc ? eps : 0.;
-
+  //parameters.itersLimit = 40000;
+  std::cout << parameters.itersLimit << "\n";
   std::string problemClass = parser.get<std::string>("problemsClass");
 
   auto start = std::chrono::system_clock::now();
@@ -40,7 +41,7 @@ int main(int argc, char** argv)
   double objectiveAvgConst = 0.;
   double solutionCheckAcc = stop_by_acc ? 0.01 : eps;
 
-#pragma omp parallel for schedule(dynamic)
+//#pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < 100; i++)
   {
     std::shared_ptr<IGOProblem<double>> problem;
@@ -89,7 +90,7 @@ int main(int argc, char** argv)
     {
       std::cout << "Exception in solver! " << std::string(err.what()) << "\n";
     }
-#pragma omp critical
+//#pragma omp critical
     {
       allStatistics.push_back(solver.GetCalculationsStatistics());
       objectiveAvgConst += solver.GetHolderConstantsEstimations().back();
@@ -184,9 +185,9 @@ void initParser(cmdline::parser& parser)
     cmdline::range(9, 16));
   parser.add<double>("reliability", 'r', "reliability parameter for the method",
     false, 5, cmdline::range(1., 1000.));
-  parser.add<double>("accuracy", 'e', "accuracy of the method", false, 0.01);
+  parser.add<double>("accuracy", 'e', "accuracy of the method", false, 0.0001);
   parser.add<double>("reserves", 'E', "eps-reserves for all constraints", false, 0);
-  parser.add<int>("itersLimit", 'i', "limit of iterations for the method", false, 5000);
+  parser.add<int>("itersLimit", 'i', "limit of iterations for the method", false, 10000);
   parser.add<int>("dim", 'd', "test problem dimension (will be set if supported)", false, 2);
   parser.add<std::string>("problemsClass", 'c', "Name of the used problems class", false,
     "gklsS", cmdline::oneof<std::string>("gklsS", "gklsH", "grish"));
