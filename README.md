@@ -20,7 +20,7 @@ make -j 4
 ```
 - on Windows:
 ```batch
-git clone --recursive https://github.com/sovrasov/glob_search_nlp_solver.git
+git clone --recursive https://github.com/MADZEROPIE/glob_search_nlp_solver.git
 cd glob_search_nlp_solver
 mkdir build
 cd build
@@ -28,6 +28,17 @@ cmake .. -G "NMake Makefiles"
 nmake
 .\bin\solve_constrained.exe
 .\bin\solve_set.exe
+```
+Or 
+```
+git clone --recursive https://github.com/sovrasov/glob_search_nlp_solver.git
+cd glob_search_nlp_solver
+mkdir build
+cd build
+cmake ..
+cmake --build . --config=RELEASE
+.\bin\Release\solve_constrained.exe
+.\bin\Release\solve_set.exe
 ```
 [paper]: https://www.tandfonline.com/doi/abs/10.1080/17442508908833568?journalCode=gssr19
 
