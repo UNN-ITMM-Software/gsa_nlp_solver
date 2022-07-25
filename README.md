@@ -36,7 +36,7 @@ cd ags_nlp_solver
 mkdir build
 cd build
 cmake ..
-cmake --build . --config=RELEASE
+cmake --build . --config RELEASE
 .\bin\Release\solve_constrained.exe
 .\bin\Release\solve_set.exe
 ```
