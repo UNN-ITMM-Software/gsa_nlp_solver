@@ -9,8 +9,8 @@ This implementation of AGS is included into [NLOpt](https://github.com/stevengj/
 ## Clone & build, run samples
 - on Linux:
 ```bash
-git clone --recursive https://github.com/sovrasov/glob_search_nlp_solver.git
-cd glob_search_nlp_solver
+git clone --recursive https://github.com/MADZEROPIE/ags_nlp_solver.git
+cd ags_nlp_solver
 mkdir build
 cd build
 cmake ..
@@ -20,14 +20,25 @@ make -j 4
 ```
 - on Windows:
 ```batch
-git clone --recursive https://github.com/sovrasov/glob_search_nlp_solver.git
-cd glob_search_nlp_solver
+git clone --recursive https://github.com/MADZEROPIE/ags_nlp_solver.git
+cd ags_nlp_solver
 mkdir build
 cd build
 cmake .. -G "NMake Makefiles"
 nmake
 .\bin\solve_constrained.exe
 .\bin\solve_set.exe
+```
+Or
+```batch
+git clone --recursive https://github.com/MADZEROPIE/ags_nlp_solver.git
+cd ags_nlp_solver
+mkdir build
+cd build
+cmake ..
+cmake --build . --config RELEASE
+.\bin\Release\solve_constrained.exe
+.\bin\Release\solve_set.exe
 ```
 [paper]: https://www.tandfonline.com/doi/abs/10.1080/17442508908833568?journalCode=gssr19
 
