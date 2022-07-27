@@ -133,14 +133,14 @@ void saveStatistics(const std::vector<std::vector<unsigned>>& stat, const cmdlin
   unsigned solvedCounter = 0;
   unsigned maxIters = 0;
 
-  for(const auto& elem : stat)
+  for (const auto& elem : stat)
   {
     maxIters = std::max(maxIters, elem[0]);
     for(size_t j = 0; j < numFuncs; j++)
       avgCalcs[j] += elem[j];
     solvedCounter += elem.back();
   }
-  for(size_t j = 0; j < numFuncs; j++)
+  for (size_t j = 0; j < numFuncs; j++)
   {
     avgCalcs[j] /= stat.size();
     std::cout << "Average calculations number of function # " << j << " = " << avgCalcs[j] << "\n";
@@ -148,8 +148,9 @@ void saveStatistics(const std::vector<std::vector<unsigned>>& stat, const cmdlin
   std::cout << "Problems solved: " << solvedCounter << "\n";
   std::cout << "Maximum number of iterations: " << maxIters << "\n";
 
-  if(parser.exist("saveStat"))
+  if (parser.exist("saveStat"))
   {
+    std::cout << "Saving statistics...\n";
     std::vector<std::pair<int, int>> operationCharacteristic;
     const unsigned opStep = maxIters / 150;
     for(unsigned i = 0; i < maxIters + opStep; i+= opStep)
@@ -165,18 +166,20 @@ void saveStatistics(const std::vector<std::vector<unsigned>>& stat, const cmdlin
     const std::string sep = "_";
     const std::string stopType = parser.exist("accuracyStop") ? "accuracy" : "optPoint";
     std::string generatedName = parser.get<std::string>("problemsClass") + sep +
-      "n_" + std::to_string(parser.get<int>("dim")) + sep +
-      "r_" + std::to_string(parser.get<double>("reliability")) + sep +
-      "eps_" + std::to_string(parser.get<double>("accuracy")) + sep +
-      "lm_" + std::to_string(parser.get<int>("localMix"));
+        "n_" + std::to_string(parser.get<int>("dim")) + sep +
+        "r_" + std::to_string(parser.get<double>("reliability")) + sep +
+        "eps_" + std::to_string(parser.get<double>("accuracy")) + sep +
+        //"lm_" + std::to_string(parser.get<int>("localMix")) + sep + // MAD: parametr with that name doesn't exist in parser
+        "np_" + std::to_string(parser.get<int>("numPoints"));
     if(fileName.empty())
       fileName = generatedName + ".csv";
 
+    std::cout << "Output file: " << fileName << std::endl;
     std::ofstream fout;
     fout.open(fileName, std::ios_base::out);
     fout << generatedName << std::endl;
     for(const auto& point : operationCharacteristic)
-      fout << point.first << ", " << point.second << std::endl;
+      fout << point.first << ";" << point.second << std::endl;
   }
 }
 
