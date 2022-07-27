@@ -226,7 +226,7 @@ void NLPSolver::FirstIteration()
 
 void NLPSolver::MakeTrials()
 {
-  #pragma omp parallel for //schedule(dynamic)
+  #pragma omp parallel for num_threads(mParameters.numPoints)//schedule(dynamic) 
   for (int i = 0; i < mNextPoints.size(); i++)
   {
     int idx = 0;
@@ -245,10 +245,10 @@ void NLPSolver::MakeTrials()
         mNextPoints[i].g[idx] = mProblem->Calculate(mNextPoints[i].y, idx);
     }
   }
-  //#pragma omp single // No need for that.
   for (int i = 0; i < mNextPoints.size(); i++) {
       int idx = mNextPoints[i].idx;
-      for(int j=0;j<=idx;++j) mCalculationsCounters[idx]++;
+      for (int j = 0; j <= idx; ++j)
+          mCalculationsCounters[idx]++;
       if (idx > mMaxIdx)
       {
           mMaxIdx = idx;

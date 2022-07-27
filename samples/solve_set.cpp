@@ -31,8 +31,9 @@ int main(int argc, char** argv)
   parameters.mixedFastMode = parser.exist("mf");
   bool stop_by_acc = parser.exist("accuracyStop");
   parameters.eps = stop_by_acc ? eps : 0.;
-  //parameters.itersLimit = 40000;
-  std::cout << parameters.itersLimit << "\n";
+
+  parameters.numPoints = parser.get<int>("numPoints");
+
   std::string problemClass = parser.get<std::string>("problemsClass");
 
   auto start = std::chrono::system_clock::now();
@@ -185,7 +186,7 @@ void initParser(cmdline::parser& parser)
     cmdline::range(9, 16));
   parser.add<double>("reliability", 'r', "reliability parameter for the method",
     false, 5, cmdline::range(1., 1000.));
-  parser.add<double>("accuracy", 'e', "accuracy of the method", false, 0.0001);
+  parser.add<double>("accuracy", 'e', "accuracy of the method", false, 0.01);
   parser.add<double>("reserves", 'E', "eps-reserves for all constraints", false, 0);
   parser.add<int>("itersLimit", 'i', "limit of iterations for the method", false, 10000);
   parser.add<int>("dim", 'd', "test problem dimension (will be set if supported)", false, 2);
@@ -197,4 +198,5 @@ void initParser(cmdline::parser& parser)
   parser.add("saveStat", 's', "Save statistics in a .csv file");
   parser.add("refineLoc", 'l', "Refine the global solution using a local optimizer");
   parser.add("mf", ' ', "Use the accelerated method with mixed charactersistics");
+  parser.add("numPoints", 'n', "Number of new points per iteration (one point - one thread)", false, 6);
 }
