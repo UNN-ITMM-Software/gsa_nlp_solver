@@ -169,7 +169,6 @@ void saveStatistics(const std::vector<std::vector<unsigned>>& stat, const cmdlin
         "n_" + std::to_string(parser.get<int>("dim")) + sep +
         "r_" + std::to_string(parser.get<double>("reliability")) + sep +
         "eps_" + std::to_string(parser.get<double>("accuracy")) + sep +
-        //"lm_" + std::to_string(parser.get<int>("localMix")) + sep + // MAD: parametr with that name doesn't exist in parser
         "np_" + std::to_string(parser.get<int>("numPoints"));
     if(fileName.empty())
       fileName = generatedName + ".csv";
