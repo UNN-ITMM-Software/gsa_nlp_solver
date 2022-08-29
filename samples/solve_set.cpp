@@ -153,11 +153,11 @@ void saveStatistics(const std::vector<std::vector<unsigned>>& stat, const cmdlin
     std::cout << "Saving statistics...\n";
     std::vector<std::pair<int, int>> operationCharacteristic;
     const unsigned opStep = maxIters / 150;
-    for(unsigned i = 0; i < maxIters + opStep; i+= opStep)
+    for (unsigned i = 0; i < maxIters + opStep; i+= opStep)
     {
       int solvedProblemsCnt = 0;
-      for(const auto& elem : stat)
-        if(elem.back() && elem[numFuncs - 1] <= i)
+      for (const auto& elem : stat)
+        if (elem.back() && elem[numFuncs - 1] <= i)
           solvedProblemsCnt++;
       operationCharacteristic.push_back(std::make_pair(i, solvedProblemsCnt));
     }
@@ -170,14 +170,14 @@ void saveStatistics(const std::vector<std::vector<unsigned>>& stat, const cmdlin
         "r_" + std::to_string(parser.get<double>("reliability")) + sep +
         "eps_" + std::to_string(parser.get<double>("accuracy")) + sep +
         "np_" + std::to_string(parser.get<int>("numPoints"));
-    if(fileName.empty())
+    if (fileName.empty())
       fileName = generatedName + ".csv";
 
     std::cout << "Output file: " << fileName << std::endl;
     std::ofstream fout;
     fout.open(fileName, std::ios_base::out);
     fout << generatedName << std::endl;
-    for(const auto& point : operationCharacteristic)
+    for (const auto& point : operationCharacteristic)
       fout << point.first << ";" << point.second << std::endl;
   }
 }
@@ -187,13 +187,13 @@ void initParser(cmdline::parser& parser)
   parser.add<int>("evolventDensity", 'm', "", false, 12,
     cmdline::range(9, 16));
   parser.add<double>("reliability", 'r', "reliability parameter for the method",
-    false, 5, cmdline::range(1., 1000.));
+    false, 3, cmdline::range(1., 1000.));
   parser.add<double>("accuracy", 'e', "accuracy of the method", false, 0.01);
   parser.add<double>("reserves", 'E', "eps-reserves for all constraints", false, 0);
   parser.add<int>("itersLimit", 'i', "limit of iterations for the method", false, 10000);
   parser.add<int>("dim", 'd', "test problem dimension (will be set if supported)", false, 2);
   parser.add<std::string>("problemsClass", 'c', "Name of the used problems class", false,
-    "gklsS", cmdline::oneof<std::string>("gklsS", "gklsH", "grish"));
+    "grish", cmdline::oneof<std::string>("gklsS", "gklsH", "grish"));
   parser.add<std::string>("outFile", 'f', "Name of the output .csv file with statistics", false,
     "");
   parser.add("accuracyStop", 'a', "Use native stop criterion instead of checking known optimum");
