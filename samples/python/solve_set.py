@@ -30,7 +30,7 @@ def main(args):
     params.evolventDensity = args.m
     params.epsR = args.epsR
     params.refineSolution = args.refine_loc
-
+    params.numPoints = args.num_points
     solver = ags_solver.Solver()
     solver.SetParameters(params)
 
@@ -68,5 +68,5 @@ if __name__ == '__main__':
     parser.add_argument('--problems_dim', type=int, default=2)
     parser.add_argument('--verbose', action='store_true', help='Print additional info to console')
     parser.add_argument('--dist_stop', action='store_true', help='Stop algorithm then the next point is close enough to the optimum')
-
+    parser.add_argument("--num_points", type=int, default=6, help="Number of new points per iteration (one point - one thread)")
     main(parser.parse_args())
