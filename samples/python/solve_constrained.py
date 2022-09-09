@@ -33,7 +33,7 @@ def main(args):
     params.evolventDensity = args.m
     params.epsR = args.epsR
     params.refineSolution = args.refine_loc
-
+    params.numPoints=1
     solver = ags_solver.Solver()
     solver.SetParameters(params)
     solver.SetProblem([c1, c2, c3, obj_f], *bounds)
