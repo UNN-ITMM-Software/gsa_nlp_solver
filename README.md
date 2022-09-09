@@ -41,7 +41,7 @@ If `PYBIND11_PYTHON_VERSION` is not specified, bindings would be built for the l
 Running python example (after calling `make` or `cmake --build`) from main folder
 - on Linux:
 ```bash
-cp -r 3rd-party/global-optimization-test-problems/benchmark_tools/ build/bin/Release/
+cp -r 3rd-party/global-optimization-test-problems/benchmark_tools/ build/bin/
 export PYTHONPATH=build/bin
 python samples/python/solve_constrained.py
 ```
