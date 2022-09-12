@@ -1,9 +1,9 @@
-[submodule "3rd-party/global-optimization-test-problems"]
-	path = 3rd-party/global-optimization-test-problems
-	url = https://github.com/sovrasov/global-optimization-test-problems.git
 [submodule "3rd-party/cmdline"]
 	path = 3rd-party/cmdline
 	url = https://github.com/sovrasov/cmdline.git
 [submodule "3rd-party/pybind11"]
 	path = 3rd-party/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "3rd-party/global-optimization-test-problems/3rd-party/pybind11"]
+	path = 3rd-party/global-optimization-test-problems/3rd-party/pybind11
 	url = https://github.com/pybind/pybind11.git

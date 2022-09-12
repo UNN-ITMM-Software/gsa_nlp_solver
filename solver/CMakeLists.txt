@@ -8,7 +8,7 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 
 file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/core/include/*.hpp)
+${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp)
 
 add_library(${PROJECT_NAME_STR} ${SRC_FILES})
 

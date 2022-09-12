@@ -30,7 +30,7 @@ def main(args):
     params.evolventDensity = args.m
     params.epsR = args.epsR
     params.refineSolution = args.refine_loc
-
+    params.numPoints = args.num_points
     solver = ags_solver.Solver()
     solver.SetParameters(params)
 
@@ -43,7 +43,7 @@ def main(args):
         else:
             problems = GKLSClass(args.problems_dim, go_problems.GKLSClass.Hard)
 
-    calc_stats, solved_status = solve_class(problems, AGSWrapper(solver, args.dist_stop), verbose=args.verbose)
+    calc_stats, solved_status = solve_class(problems, AGSWrapper(solver, args.dist_stop), verbose=args.verbose, external_solution_check = False)
     stats = compute_stats(calc_stats, solved_status)
 
     print('Problems solved: {}'.format(stats['num_solved']))
@@ -58,8 +58,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Sample for AGS solver')
     parser.add_argument('--m', type=int, default=12, help='Evolvent density')
     parser.add_argument('--r', type=float, default=3, help='Reliability parameter for the solver')
-    parser.add_argument('--eps', type=float, default=0.001, help='Accuracy of the method')
-    parser.add_argument('--epsR', type=float, default=0.01, help='eps-reserves for all constraints')
+    parser.add_argument('--eps', type=float, default=0.01, help='Accuracy of the method')
+    parser.add_argument('--epsR', type=float, default=0, help='eps-reserves for all constraints')
     parser.add_argument('--max_iters', type=int, default=10000, help='limit of iterations for the method')
     parser.add_argument('--refine_loc', action='store_true', help='Refine the global solution using a local optimizer')
     parser.add_argument('--stats_fname', type=str, default='AGS_cmc.pdf')
@@ -68,5 +68,5 @@ if __name__ == '__main__':
     parser.add_argument('--problems_dim', type=int, default=2)
     parser.add_argument('--verbose', action='store_true', help='Print additional info to console')
     parser.add_argument('--dist_stop', action='store_true', help='Stop algorithm then the next point is close enough to the optimum')
-
+    parser.add_argument("--num_points", type=int, default=6, help="Number of new points per iteration (one point - one thread)")
     main(parser.parse_args())

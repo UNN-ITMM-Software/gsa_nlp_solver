@@ -32,6 +32,8 @@ int main(int argc, char** argv)
   bool stop_by_acc = parser.exist("accuracyStop");
   parameters.eps = stop_by_acc ? eps : 0.;
 
+  parameters.numPoints = parser.get<int>("numPoints");
+
   std::string problemClass = parser.get<std::string>("problemsClass");
 
   auto start = std::chrono::system_clock::now();
@@ -40,7 +42,7 @@ int main(int argc, char** argv)
   double objectiveAvgConst = 0.;
   double solutionCheckAcc = stop_by_acc ? 0.01 : eps;
 
-#pragma omp parallel for schedule(dynamic)
+//#pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < 100; i++)
   {
     std::shared_ptr<IGOProblem<double>> problem;
@@ -89,7 +91,7 @@ int main(int argc, char** argv)
     {
       std::cout << "Exception in solver! " << std::string(err.what()) << "\n";
     }
-#pragma omp critical
+//#pragma omp critical
     {
       allStatistics.push_back(solver.GetCalculationsStatistics());
       objectiveAvgConst += solver.GetHolderConstantsEstimations().back();
@@ -131,14 +133,14 @@ void saveStatistics(const std::vector<std::vector<unsigned>>& stat, const cmdlin
   unsigned solvedCounter = 0;
   unsigned maxIters = 0;
 
-  for(const auto& elem : stat)
+  for (const auto& elem : stat)
   {
     maxIters = std::max(maxIters, elem[0]);
     for(size_t j = 0; j < numFuncs; j++)
       avgCalcs[j] += elem[j];
     solvedCounter += elem.back();
   }
-  for(size_t j = 0; j < numFuncs; j++)
+  for (size_t j = 0; j < numFuncs; j++)
   {
     avgCalcs[j] /= stat.size();
     std::cout << "Average calculations number of function # " << j << " = " << avgCalcs[j] << "\n";
@@ -146,15 +148,16 @@ void saveStatistics(const std::vector<std::vector<unsigned>>& stat, const cmdlin
   std::cout << "Problems solved: " << solvedCounter << "\n";
   std::cout << "Maximum number of iterations: " << maxIters << "\n";
 
-  if(parser.exist("saveStat"))
+  if (parser.exist("saveStat"))
   {
+    std::cout << "Saving statistics...\n";
     std::vector<std::pair<int, int>> operationCharacteristic;
     const unsigned opStep = maxIters / 150;
-    for(unsigned i = 0; i < maxIters + opStep; i+= opStep)
+    for (unsigned i = 0; i < maxIters + opStep; i+= opStep)
     {
       int solvedProblemsCnt = 0;
-      for(const auto& elem : stat)
-        if(elem.back() && elem[numFuncs - 1] <= i)
+      for (const auto& elem : stat)
+        if (elem.back() && elem[numFuncs - 1] <= i)
           solvedProblemsCnt++;
       operationCharacteristic.push_back(std::make_pair(i, solvedProblemsCnt));
     }
@@ -163,18 +166,19 @@ void saveStatistics(const std::vector<std::vector<unsigned>>& stat, const cmdlin
     const std::string sep = "_";
     const std::string stopType = parser.exist("accuracyStop") ? "accuracy" : "optPoint";
     std::string generatedName = parser.get<std::string>("problemsClass") + sep +
-      "n_" + std::to_string(parser.get<int>("dim")) + sep +
-      "r_" + std::to_string(parser.get<double>("reliability")) + sep +
-      "eps_" + std::to_string(parser.get<double>("accuracy")) + sep +
-      "lm_" + std::to_string(parser.get<int>("localMix"));
-    if(fileName.empty())
+        "n_" + std::to_string(parser.get<int>("dim")) + sep +
+        "r_" + std::to_string(parser.get<double>("reliability")) + sep +
+        "eps_" + std::to_string(parser.get<double>("accuracy")) + sep +
+        "np_" + std::to_string(parser.get<int>("numPoints"));
+    if (fileName.empty())
       fileName = generatedName + ".csv";
 
+    std::cout << "Output file: " << fileName << std::endl;
     std::ofstream fout;
     fout.open(fileName, std::ios_base::out);
     fout << generatedName << std::endl;
-    for(const auto& point : operationCharacteristic)
-      fout << point.first << ", " << point.second << std::endl;
+    for (const auto& point : operationCharacteristic)
+      fout << point.first << ";" << point.second << std::endl;
   }
 }
 
@@ -183,17 +187,18 @@ void initParser(cmdline::parser& parser)
   parser.add<int>("evolventDensity", 'm', "", false, 12,
     cmdline::range(9, 16));
   parser.add<double>("reliability", 'r', "reliability parameter for the method",
-    false, 5, cmdline::range(1., 1000.));
+    false, 3, cmdline::range(1., 1000.));
   parser.add<double>("accuracy", 'e', "accuracy of the method", false, 0.01);
   parser.add<double>("reserves", 'E', "eps-reserves for all constraints", false, 0);
-  parser.add<int>("itersLimit", 'i', "limit of iterations for the method", false, 5000);
+  parser.add<int>("itersLimit", 'i', "limit of iterations for the method", false, 10000);
   parser.add<int>("dim", 'd', "test problem dimension (will be set if supported)", false, 2);
   parser.add<std::string>("problemsClass", 'c', "Name of the used problems class", false,
-    "gklsS", cmdline::oneof<std::string>("gklsS", "gklsH", "grish"));
+    "grish", cmdline::oneof<std::string>("gklsS", "gklsH", "grish"));
   parser.add<std::string>("outFile", 'f', "Name of the output .csv file with statistics", false,
     "");
   parser.add("accuracyStop", 'a', "Use native stop criterion instead of checking known optimum");
   parser.add("saveStat", 's', "Save statistics in a .csv file");
   parser.add("refineLoc", 'l', "Refine the global solution using a local optimizer");
   parser.add("mf", ' ', "Use the accelerated method with mixed charactersistics");
+  parser.add("numPoints", 'n', "Number of new points per iteration (one point - one thread)", false, 6);
 }
