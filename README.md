@@ -38,15 +38,17 @@ AGS is also available from Python. To build the bindings add the following comma
  cmake .. -DBUILD_BINDINGS=ON -DPYBIND11_PYTHON_VERSION=<required python version>
 ```
 If `PYBIND11_PYTHON_VERSION` is not specified, bindings would be built for the latest found Python version.
-Running python example (after calling `make` or `cmake --build`) from main folder
+Running python example (after calling `make` or `cmake --build`) from **build folder**
 - on Linux:
 ```bash
+cd ..
 cp -r 3rd-party/global-optimization-test-problems/benchmark_tools/ build/bin/
 export PYTHONPATH=build/bin
 python samples/python/solve_constrained.py
 ```
 - on Windows (bash):
 ```bash
+cd ..
 cp -r 3rd-party/global-optimization-test-problems/benchmark_tools/ build/bin/Release/
 export PYTHONPATH=build/bin/Release
 python samples/python/solve_constrained.py
