@@ -10,7 +10,7 @@ This implementation of GSA is included into [NLOpt](https://github.com/stevengj/
 - on Linux:
 ```bash
 git clone --recursive https://github.com/UNN-ITMM-Software/gsa_nlp_solver.git
-cd ags_nlp_solver
+cd gsa_nlp_solver
 mkdir build
 cd build
 cmake ..
@@ -21,7 +21,7 @@ make -j 4
 - on Windows:
 ```batch
 git clone --recursive https://github.com/UNN-ITMM-Software/gsa_nlp_solver.git
-cd ags_nlp_solver
+cd gsa_nlp_solver
 mkdir build
 cd build
 cmake ..
