@@ -26,8 +26,8 @@ mkdir build
 cd build
 cmake ..
 cmake --build . --config RELEASE
-.\bin\Release\solve_constrained.exe
-.\bin\Release\solve_set.exe
+./bin/Release/solve_constrained.exe
+./bin/Release/solve_set.exe
 ```
 [paper]: https://www.tandfonline.com/doi/abs/10.1080/17442508908833568?journalCode=gssr19
 
