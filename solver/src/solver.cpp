@@ -464,6 +464,8 @@ void NLPSolver::UpdateStatus(Trial* trial)
       for (int i = 0; i < pointsForLocalMethod.size(); i++) 
       {
         LocalS(*pointsForLocalMethod[i]);
+        if (this->mNeedStop)
+          break;
       }
     }
     else 
@@ -905,6 +907,7 @@ void NLPSolver::HookeJeevesMethod(Trial& point, std::vector<Trial*>& localPoints
   auto newpoint = mLocalOptimizer.Optimize(mProblem, mOptimumEstimation, mCalculationsCounters);
 
   std::vector<Trial> points = mLocalOptimizer.GetSearchSequence();
+  points.push_back(newpoint);
 
   int s = points.size();
   for (int i = 0; i < s; i++)
@@ -918,6 +921,7 @@ void NLPSolver::HookeJeevesMethod(Trial& point, std::vector<Trial*>& localPoints
     tmp->x = newX[0];
     
     double z = mProblem->Calculate(tmp->y, 0);
+    tmp->g[0] = z;
 
     tmp->TypeColor = 3;
     localPoints.push_back(tmp);

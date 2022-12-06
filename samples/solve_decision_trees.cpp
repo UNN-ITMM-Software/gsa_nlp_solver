@@ -35,8 +35,9 @@ int main(int argc, char** argv)
 
   parameters.numPoints = parser.get<int>("numPoints");
 
-  parameters.useDecisionTree = false;
+  parameters.useDecisionTree = parser.get<int>("useDecisionTree");
 
+  
   std::string problemClass = parser.get<std::string>("problemsClass");
 
   auto start = std::chrono::system_clock::now();
@@ -48,11 +49,12 @@ int main(int argc, char** argv)
 
   std::shared_ptr<IGOProblem<double>> problem;
   NLPSolver solver;
-  solver.SetParameters(parameters);
-
+  
   auto* func = new gkls::GKLSFunction();
   if (problemClass == "gklsS")
     func->SetFunctionClass(gkls::Simple, parser.get<int>("dim"));
+  else if (problemClass == "gklsH")
+    func->SetFunctionClass(gkls::Hard, parser.get<int>("dim"));
   else
     func->SetFunctionClass(gkls::Hard, parser.get<int>("dim"));
 
@@ -60,7 +62,9 @@ int main(int argc, char** argv)
   func->SetFunctionNumber(1);
   problem = std::shared_ptr<IGOProblem<double>>(func);
 
+  parameters.stopVal = func->GetOptimumValue() + parameters.eps;
 
+  solver.SetParameters(parameters);
   solver.SetProblem(problem);
   Trial optimalPoint;
   try
@@ -167,15 +171,19 @@ void initParser(cmdline::parser& parser)
   parser.add<int>("evolventDensity", 'm', "", false, 10,
     cmdline::range(9, 16));
   parser.add<double>("reliability", 'r', "reliability parameter for the method",
-    false, 4.5, cmdline::range(1., 1000.));
+    false, 5.6, cmdline::range(1., 1000.));
+
+  parser.add<int>("useDecisionTree", 't', "Is use decision tree in optimization", false, 0);
+
   parser.add<double>("accuracy", 'e', "accuracy of the method", false, 0.01);
   parser.add<double>("reserves", 'E', "eps-reserves for all constraints", false, 0);
-  parser.add<int>("itersLimit", 'i', "limit of iterations for the method", false, 1000);
+  parser.add<int>("itersLimit", 'i', "limit of iterations for the method", false, 10000);
   parser.add<int>("dim", 'd', "test problem dimension (will be set if supported)", false, 2);
   parser.add<std::string>("problemsClass", 'c', "Name of the used problems class", false,
-    "gklsS", cmdline::oneof<std::string>("gklsS", "gklsH", "grish"));
+    "gklsH", cmdline::oneof<std::string>("gklsS", "gklsH", "gklsHD"));
   parser.add<std::string>("outFile", 'f', "Name of the output .csv file with statistics", false,
     "");
+  
   parser.add("accuracyStop", 'a', "Use native stop criterion instead of checking known optimum");
   parser.add("saveStat", 's', "Save statistics in a .csv file");
   parser.add("refineLoc", 'l', "Refine the global solution using a local optimizer");

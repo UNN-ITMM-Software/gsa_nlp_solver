@@ -157,6 +157,22 @@ double GKLSFunction::Calculate(const double* x, int) const
     value = CalculateD2Function(x);
   }
 
+  if (isUseExp)
+  {
+    double koef = 0;
+    double sum = 0;
+    for (int j = 0; j < GKLS_dim; j++)
+    {
+      for (int k = 0; k < 300000; k++)
+      {
+        koef = (koef + exp(1.0) * x[j] / 4.0) * (x[j] / 4.0);
+        koef = koef * 0.000001 + 1.0;
+      }
+    }
+    sum += koef * value / koef;
+    return sum;
+  }
+
   return value;
 }
 
@@ -222,6 +238,10 @@ void GKLSFunction::SetFunctionClass(GKLSClass type, unsigned classDimension)
       GKLS_global_radius = 0.2;
     }
   }
+
+  if (type == HardD)
+    isUseExp = true;
+
   GKLS_global_value = GKLS_GLOBAL_MIN_VALUE;
 }
 int GKLSFunction::CheckParameters() const
