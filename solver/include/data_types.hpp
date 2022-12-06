@@ -19,12 +19,25 @@ namespace ags
 const unsigned solverMaxDim = 5;
 const unsigned solverMaxConstraints = 10;
 
+enum Status
+{
+  low_inflection,
+  low,
+  up,
+  up_inflection,
+  local_min
+};
+
 struct Trial
 {
   double x;
   double y[solverMaxDim];
   double g[solverMaxConstraints + 1];
   int idx;
+  /// Цвет рисования точки
+  int TypeColor = 0;
+  /// Метка точки: потенциальный локальный минимум, убывающая, возрастающая, потенциальный локальный максимум
+  Status pointStatus = up_inflection;
   Trial() {}
   Trial(double _x) : x(_x) {}
 };

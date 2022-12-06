@@ -32,6 +32,8 @@ private:
   Trial mCurrentResearchDirection;
   Trial mPreviousResearchDirection;
 
+  std::vector<Trial> mSearchSequence;
+
   void DoStep();
   double ComputeObjective(const double* x) const;
   double MakeResearch(double*);
@@ -40,6 +42,7 @@ public:
   void SetParameters(double eps, double step, double stepMult);
   Trial Optimize(std::shared_ptr<IGOProblem<double>> problem,
                  const Trial& startPoint, std::vector<unsigned>& trialsCounters);
+  std::vector<Trial> GetSearchSequence();
 };
 
 }
