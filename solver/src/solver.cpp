@@ -298,8 +298,10 @@ void NLPSolver::InsertIntervals()
       mQueue.push(pOldInterval);
     }
 
+#ifdef USE_OpenCV
     if (mParameters.useDecisionTree == true)
       UpdateStatus(&(mNextPoints[i]));
+#endif
   }
 }
 
@@ -451,6 +453,7 @@ bool solver_utils::checkVectorsDiff(const double* y1, const double* y2, size_t d
   return false;
 }
 
+#ifdef USE_OpenCV
 // ------------------------------------------------------------------------------------------------
 void NLPSolver::UpdateStatus(Trial* trial)
 {
@@ -1149,3 +1152,4 @@ bool NLPSolver::UpdateStatusDecisionTrees(Trial* trial, Trial*& inflection)
   return false;
 #endif
 }
+#endif

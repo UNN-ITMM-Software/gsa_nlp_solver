@@ -19,16 +19,10 @@ Copyright (C) 2018 Sovrasov V. - All Rights Reserved
 #include <limits>
 #include <functional>
 
-#define USE_OpenCV
-
 #ifdef USE_OpenCV
 #include "opencv.hpp"
 #include "highgui.hpp"
 #include "ml/ml.hpp"
-
-//using namespace cv;
-//using namespace ml;
-////using namespace std;
 #endif
 
 namespace ags
@@ -87,6 +81,7 @@ protected:
   double mLocalR;
   double mRho;
 
+#ifdef USE_OpenCV
   //  Для многомерных деревьев решений=================================================================================================
   cv::Mat X;
   cv::Mat ff;
@@ -105,6 +100,7 @@ protected:
   double DecisionTreesRegressionAccuracy = 0.01;
   int countPointInLocalMinimum = 5;
   double Localr = 16;
+#endif
 
   void InitLocalOptimizer();
   void FirstIteration();
@@ -123,6 +119,7 @@ protected:
   double CalculateR(const Interval*, const double) const;
   double GetNextPointCoordinate(const Interval*) const;
 
+#ifdef USE_OpenCV
   void UpdateStatusDecisionTreesMultiDims(Trial* trial, Trial*& inflection);
   std::vector<Trial*> LocalS(Trial& point);
   bool UpdateStatusDecisionTrees(Trial* trial, Trial*& inflection);
@@ -135,7 +132,7 @@ protected:
   double FindDistance(cv::Mat point, int index, Trial*& inflection);
   bool FindAndCheckPointWithNeighbours(int numPointPerDim, int nearestPointIndex, cv::Mat results);
   std::vector<int> FindNeighbours(int numPointPerDim, int nearestPointIndex, int* masOfIndexes);
-
+#endif
 public:
   using FuncPtr = std::function<double(const double*)>;
   NLPSolver();
@@ -150,10 +147,12 @@ public:
   std::vector<unsigned> GetCalculationsStatistics() const;
   std::vector<double> GetHolderConstantsEstimations() const;
 
+#ifdef USE_OpenCV
   void UpdateStatus(Trial* trial);
   void NLPSolver::HookeJeevesMethod(Trial& point, std::vector<Trial*>& localPoints);
   void InsertLocalPoints(const std::vector<Trial*>& points);
   void UpdateOptimum(Trial& t);
+#endif
 };
 
 namespace solver_utils
