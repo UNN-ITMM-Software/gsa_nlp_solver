@@ -20,9 +20,9 @@ Copyright (C) 2018 Sovrasov V. - All Rights Reserved
 #include <functional>
 
 #ifdef USE_OpenCV
-#include "opencv.hpp"
-#include "highgui.hpp"
-#include "ml/ml.hpp"
+#include "opencv2/opencv.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/ml/ml.hpp"
 #endif
 
 namespace ags
@@ -149,7 +149,7 @@ public:
 
 #ifdef USE_OpenCV
   void UpdateStatus(Trial* trial);
-  void NLPSolver::HookeJeevesMethod(Trial& point, std::vector<Trial*>& localPoints);
+  void HookeJeevesMethod(Trial& point, std::vector<Trial*>& localPoints);
   void InsertLocalPoints(const std::vector<Trial*>& points);
   void UpdateOptimum(Trial& t);
 #endif

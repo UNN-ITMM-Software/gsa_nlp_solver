@@ -95,7 +95,7 @@ int main(int argc, char** argv)
       std::cout << " not solved.";
       allStatistics.back().push_back(0);
     }
-    std::cout << " Iterations performed: " << allStatistics.back()[0] << "\n";
+    std::cout << " Iterations performed: " << allStatistics.back()[0] / parameters.numPoints << "\n";
   }
 
   auto end = std::chrono::system_clock::now();
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
   std::cout << "Time elapsed: " << elapsed_seconds.count() << "s\n";
   std::cout << "Objective average Holder const estimation: " << objectiveAvgConst << "\n";
 
-  saveStatistics(allStatistics, parser);
+//  saveStatistics(allStatistics, parser);
 
   return 0;
 }
