@@ -30,6 +30,8 @@ Trial HookeJeevesOptimizer::Optimize(std::shared_ptr<IGOProblem<double>> problem
   mStartPoint = startPoint;
   mTrialsCounters = std::vector<unsigned>(mProblem->GetConstraintsNumber() + 1, 0);
 
+  mSearchSequence.clear();
+
   int k = 0, i=0;
   bool needRestart = true;
   double currentFValue, nextFValue;
@@ -50,6 +52,15 @@ Trial HookeJeevesOptimizer::Optimize(std::shared_ptr<IGOProblem<double>> problem
 
     if (currentFValue > nextFValue)	{
       DoStep();
+
+      Trial currentTrial;
+      for (size_t iy = 0; iy < solverMaxDim; iy++)
+        currentTrial.y[iy] = mCurrentPoint.y[iy];
+      currentTrial.g[0] = nextFValue;
+      currentTrial.idx = 0;
+
+      mSearchSequence.push_back(currentTrial);
+
       k++;
       currentFValue = nextFValue;
     }
@@ -86,6 +97,13 @@ Trial HookeJeevesOptimizer::Optimize(std::shared_ptr<IGOProblem<double>> problem
     trialsCounters[i] += mTrialsCounters[i];
 
   return mPreviousResearchDirection;
+}
+
+std::vector<Trial> ags::HookeJeevesOptimizer::GetSearchSequence()
+{
+
+  return mSearchSequence;
+
 }
 
 void HookeJeevesOptimizer::DoStep()

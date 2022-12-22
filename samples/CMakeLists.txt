@@ -11,13 +11,37 @@ find_package(OpenMP)
 
 include_directories(${CMDLINE_INCLUDE})
 
-add_executable(solve_set ${CMAKE_CURRENT_SOURCE_DIR}/solve_set.cpp)
-target_link_libraries(solve_set nlp_solver gkls_functions grishagin_functions)
+if (${GSA_USE_OPEN_CV})
 
-add_executable(solve_constrained ${CMAKE_CURRENT_SOURCE_DIR}/solve_constrained.cpp)
-target_link_libraries(solve_constrained nlp_solver gkls_functions grishagin_functions)
+  include_directories(
+  ${GSA_OPEN_CV_INCLUDES})
 
-if (${OPENMP_FOUND})
-  set_target_properties(solve_set PROPERTIES COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
-  target_link_libraries(solve_set ${OpenMP_CXX_LIBRARIES})
+  link_directories(
+  ${GSA_OPEN_CV_LIB_DIR})
+
+  add_executable(solve_decision_trees ${CMAKE_CURRENT_SOURCE_DIR}/solve_decision_trees.cpp)
+  target_link_libraries(solve_decision_trees nlp_solver gkls_functions grishagin_functions)
+
+  if (${OPENMP_FOUND})
+    set_target_properties(solve_decision_trees PROPERTIES COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
+    target_link_libraries(solve_decision_trees ${OpenMP_CXX_LIBRARIES})
+  endif()
+
+else()
+  add_executable(solve_set ${CMAKE_CURRENT_SOURCE_DIR}/solve_set.cpp)
+  target_link_libraries(solve_set nlp_solver gkls_functions grishagin_functions)
+  
+  add_executable(solve_constrained ${CMAKE_CURRENT_SOURCE_DIR}/solve_constrained.cpp)
+  target_link_libraries(solve_constrained nlp_solver gkls_functions grishagin_functions)
+  
+  if (${OPENMP_FOUND})
+    set_target_properties(solve_set PROPERTIES COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
+    target_link_libraries(solve_set ${OpenMP_CXX_LIBRARIES})
+  endif()
+
 endif()
+
+
+
+
+

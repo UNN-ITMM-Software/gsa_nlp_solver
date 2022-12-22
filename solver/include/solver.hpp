@@ -19,6 +19,12 @@ Copyright (C) 2018 Sovrasov V. - All Rights Reserved
 #include <limits>
 #include <functional>
 
+#ifdef USE_OpenCV
+#include "opencv2/opencv.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/ml/ml.hpp"
+#endif
+
 namespace ags
 {
 
@@ -36,6 +42,8 @@ struct SolverParameters
   bool refineSolution = false; //if true, the fibal solution will be refined with the HookJeves method.
   bool mixedFastMode = false; //if true, two versions of characteristics with different values of the r parameter are used.
   //It allows to speedup the method in case of overestimation io r
+
+  bool useDecisionTree = false;
 
   SolverParameters() {}
   SolverParameters(double _eps, double _r,
@@ -73,6 +81,27 @@ protected:
   double mLocalR;
   double mRho;
 
+#ifdef USE_OpenCV
+  //  ƒл€ многомерных деревьев решений=================================================================================================
+  cv::Mat X;
+  cv::Mat ff;
+  // –авномерна€ сетка, использкюща€ при выборе интервала, хран€щего локальный минимум с использованием деревьев решений
+  cv::Mat uniformPartition;
+  cv::Ptr< cv::ml::DTrees > Mytree;
+  //cv::Mat results;
+  std::vector<Trial*> pointsForTree;
+  std::vector<Trial*> pointsForLocalMethod;
+  bool isFirst = true;
+  int indexForTrainingMax = 0;
+  std::vector<Trial*> localMins;
+  int countOfRepetitions = 0;
+
+  int DecisionTreesMaxDepth = 6;
+  double DecisionTreesRegressionAccuracy = 0.01;
+  int countPointInLocalMinimum = 5;
+  double Localr = 16;
+#endif
+
   void InitLocalOptimizer();
   void FirstIteration();
   void MakeTrials();
@@ -90,6 +119,20 @@ protected:
   double CalculateR(const Interval*, const double) const;
   double GetNextPointCoordinate(const Interval*) const;
 
+#ifdef USE_OpenCV
+  void UpdateStatusDecisionTreesMultiDims(Trial* trial, Trial*& inflection);
+  std::vector<Trial*> LocalS(Trial& point);
+  bool UpdateStatusDecisionTrees(Trial* trial, Trial*& inflection);
+  void CreateTree();
+  void PrepareDataForDecisionTree(int N);
+  void fillDataForDecisionTree(Trial* point);
+  void FillTheSegment(int numPointPerDim);
+  void recursiveFilling(int dim, const double* lb, const double* ub, int numPointPerDim, cv::Mat* uniformPartition, double*& value, int& index, int reset);
+  int FindIndexOfNearestPoint(int numPointPerDim, Trial*& inflection);
+  double FindDistance(cv::Mat point, int index, Trial*& inflection);
+  bool FindAndCheckPointWithNeighbours(int numPointPerDim, int nearestPointIndex, cv::Mat results);
+  std::vector<int> FindNeighbours(int numPointPerDim, int nearestPointIndex, int* masOfIndexes);
+#endif
 public:
   using FuncPtr = std::function<double(const double*)>;
   NLPSolver();
@@ -103,6 +146,13 @@ public:
   Trial Solve();
   std::vector<unsigned> GetCalculationsStatistics() const;
   std::vector<double> GetHolderConstantsEstimations() const;
+
+#ifdef USE_OpenCV
+  void UpdateStatus(Trial* trial);
+  void HookeJeevesMethod(Trial& point, std::vector<Trial*>& localPoints);
+  void InsertLocalPoints(const std::vector<Trial*>& points);
+  void UpdateOptimum(Trial& t);
+#endif
 };
 
 namespace solver_utils

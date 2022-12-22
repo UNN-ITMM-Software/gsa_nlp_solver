@@ -115,7 +115,7 @@ namespace gkls
     /* (the resting elements of the list)                         */
   } T_GKLS_GlobalMinima;
 
-  enum GKLSClass { Hard, Simple };
+  enum GKLSClass { Hard, Simple, HardD};
   enum GKLSFuncionType { TND, TD, TD2 };
 
   struct GKLSParameters
@@ -179,6 +179,8 @@ namespace gkls
     unsigned long rnd_counter; /* index of random array elements */
 
     double* rnd_num, *rand_condition;
+
+    bool isUseExp;
 
     int GKLS_domain_alloc(); /* allocate boundary vectors   */
     void GKLS_domain_free(); /* deallocate boundary vectors */
